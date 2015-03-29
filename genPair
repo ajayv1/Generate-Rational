@@ -1,0 +1,36 @@
+--Initially i thought I need to generate pair. And thats also correct. 
+--But for ease i used product pattern i.e (N x N) over pairs.
+
+
+open import Data.Nat
+module genPair where
+
+record pair : Set where
+  field 
+      x : ℕ
+      y : ℕ
+      
+mkPair : ℕ → ℕ → pair
+mkPair a b = record { x = a; y = b}
+
+getX : pair → ℕ 
+getX = pair.x
+
+getY : pair → ℕ
+getY = pair.y
+
+incFst : pair → pair
+incFst r = record {x = suc (pair.x r) ; y = pair.y r}  
+
+incSnd : pair → pair
+incSnd r = record {x = pair.x r ; y = suc (pair.y r)}  
+
+{-
+r : pair
+r = record { x = 1
+                ; y = 2
+               }
+w : pair
+--w = incFst r
+w = incSnd r
+-}
