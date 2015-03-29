@@ -1,0 +1,71 @@
+module genRational where
+
+open import Data.Nat
+open import Data.Nat.DivMod
+open import Data.Bool
+open import Data.Nat.Properties
+open import records
+open import Data.Nat.Coprimality
+open import Relation.Nullary.Decidable
+open import Data.Stream
+open import Data.Product
+open import Data.Vec 
+
+_==_ : ℕ → ℕ → Bool
+zero == zero = true
+zero == _ = false
+_ == zero = false
+suc m == suc n = m == n
+
+even : ℕ → Bool
+even zero = true
+even (suc zero) = false
+even (suc (suc n)) = even n
+
+_mod2 : ℕ → ℕ
+m mod2  = if (even m) then 0 else 1
+
+
+-- problem with less than symbol as it it defined in Data.Nat and Data.Bool so i used 'lt'.
+_lt_ : ℕ → ℕ → Bool
+_ lt zero = false
+zero lt suc n = true
+suc m lt suc n = m lt n
+
+-- it return boolean value depending on the correctness of rational.
+valid : ℕ × ℕ → Bool
+valid (n , d) =  if ( ⌊ coprime? n  d ⌋ ) then true
+              else false
+      
+
+-- Doubt 1: I am not able to write it efficiently as it ask for termination check condition. 
+-- we can see d will decrease it will surely terminate but still i get problem. 
+--That's why I used No Tremination Check. Is it correct??
+
+{-# NO_TERMINATION_CHECK #-}
+gcdd : ℕ × ℕ → ℕ × ℕ
+--gcdd (x , 1) = (x , 1)
+--gcdd (1 , x) = (1 , x)
+gcdd (n , d) = 
+      if ( ⌊ coprime? n  d ⌋ ) then (n , d)
+            else gcdd ((n + 1) , ( d ∸ 1))
+     
+
+-- This will give a valid next rational number.
+next : ℕ × ℕ → ℕ × ℕ
+next (n , d) = 
+       if (( n mod2)  == (d mod2)) then
+              if (valid ((n + 1) , (if (1 lt d) then d ∸ 1 else d))) then 
+                  ((n + 1) , (if (1 lt d) then d ∸ 1 else d))
+              else gcdd ((n + 1) , (if (1 lt d) then d ∸ 1 else d))
+       else 
+               if (valid ((if (1 lt n) then n ∸ 1 else n) , ( d + 1))) then 
+                  (( if (1 lt n) then n ∸ 1 else n) , ( d + 1))
+               else  gcdd (( if (1 lt n) then n ∸ 1 else n) , ( d + 1))     
+
+
+ans : Stream (ℕ × ℕ)
+ans = iterate next (1 , 1)
+
+-- I wanted a dynamic Stream structure. I used iterate function thats from haskell.
+-- only problem is running time is too high. Is there any better algorithm exist??
