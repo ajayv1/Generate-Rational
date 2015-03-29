@@ -25,6 +25,7 @@ incFst r = record {x = suc (pair.x r) ; y = pair.y r}
 incSnd : pair → pair
 incSnd r = record {x = pair.x r ; y = suc (pair.y r)}  
 
+
 {-
 r : pair
 r = record { x = 1
