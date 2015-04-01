@@ -1,10 +1,13 @@
 My algorithm to generate rational is:
 
 Method  0:
+
        valid (int n , int d){
-           if( n and d are co-prime) then return true;
-           return false;
+         if( n and d are co-prime) then return true;
+         return false;
        }
+       
+       
        gcd(int n , int d){
           if( n and d are co-prime) then return (n , d);
           else return gcd (n + 1 , d - 1);
@@ -30,6 +33,7 @@ Method  0:
 
 // The fastest method
 Method1: 
+
        next ( int n , int d) {
           if( n == 1) then return (d + 1 , 1);
           else return (pred n , suc d);
