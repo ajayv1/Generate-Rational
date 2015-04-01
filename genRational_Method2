@@ -1,0 +1,69 @@
+module genRational_Method2 where
+
+open import Data.Nat as Nat
+open import Data.Nat.DivMod
+open import Data.Bool
+open import Data.Nat.Properties
+open import records
+open import Data.Nat.Coprimality
+open import Relation.Nullary.Decidable
+open import Data.Product
+open import Data.Vec using (Vec; []; _∷_)
+open import Coinduction
+
+data Stream (A : Set ) : Set where
+    _:::_ : A → ∞ (Stream A) → Stream A
+
+iterate : ∀ {A} → (A → A) → A → Stream A
+iterate f x = x ::: ♯ iterate f (f x)
+
+head : ∀ {A} → Stream A → A
+head (x ::: xs) = x
+
+take : ∀ {A} n → Stream A → Vec A n  
+take 0  xs         =     []
+take (Nat.suc n) (x ::: xs) =  x ∷ (take (n)  (♭ xs))
+
+_==_ : ℕ → ℕ → Bool
+zero == zero = true
+zero == _ = false
+_ == zero = false
+suc m == suc n = m == n
+
+even : ℕ → Bool
+even zero = true
+even (suc zero) = false
+even (suc (suc n)) = even n
+
+_mod2 : ℕ → ℕ
+m mod2  = if (even m) then 0 else 1
+
+_lt_ : ℕ → ℕ → Bool
+_ lt zero = false
+zero lt suc n = true
+suc m lt suc n = m lt n
+
+-- This method is slower than method1 but here i get the pair in the prescribed order.
+next : pair → pair
+next q = 
+         if (( n mod2)  == (d mod2)) then
+                  (mkPair (n + 1) (if (1 lt d) then d ∸ 1 else d))
+         else  
+                  (mkPair (if (1 lt n) then n ∸ 1 else n) ( d + 1))
+  
+   where 
+      n   = getX q  
+      d  = getY q
+   
+        
+ans : Stream pair
+ans = iterate next (mkPair 1 1)
+
+{-# NO_TERMINATION_CHECK #-}
+genRat : Stream pair → Stream pair
+genRat (p ::: xs)  = 
+               if ( ⌊ coprime? (getX p)  (getY p) ⌋) then ( p ::: (♯ genRat (♭ xs)))
+               else genRat  (♭ xs)
+   
+rat : Stream pair
+rat = genRat ans 
