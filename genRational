@@ -22,6 +22,7 @@ even zero = true
 even (suc zero) = false
 even (suc (suc n)) = even n
 
+
 _mod2 : ℕ → ℕ
 m mod2  = if (even m) then 0 else 1
 
