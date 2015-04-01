@@ -9,6 +9,7 @@ Method  0:
           if( n and d are co-prime) then return (n , d);
           else return gcd (n + 1 , d - 1);
        }
+       
        next ( int n , int d) { // will give the next valid rational
           if( n % 2 == d % 2){ // n = numerator , d = denominator
             n++;
@@ -29,7 +30,7 @@ Method  0:
 
 // The fastest method
 Method1: 
-       next (int n, int d) {
+       next ( int n , int d) {
           if( n == 1) then return (d + 1 , 1);
           else return (pred n , suc d);
        }
